@@ -12,7 +12,6 @@ const roles = [
 
 const users = [
   {
-    name: 'Thomas',
     password_hash: '1714fa58aa2976dac8e9b6adf3661888',
     username: 'thomalex',
     email: 'thomas@fakemail.com',
@@ -111,7 +110,6 @@ exports.up = async (sql) => {
   await sql`
 		INSERT INTO "user" ${sql(
       users,
-      'name',
       'password_hash',
       'username',
       'email',
@@ -136,7 +134,7 @@ exports.down = async (sql) => {
 	DELETE FROM
 	 leaps
 `;
-    await sql`
+  await sql`
   DELETE FROM
    "location"
   `;

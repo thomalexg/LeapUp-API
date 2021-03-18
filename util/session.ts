@@ -1,17 +1,17 @@
 import crypto from 'crypto';
+import { serializeSecureCookieServerSide } from './cookies';
 
 export function generateToken() {
   return crypto.randomBytes(24).toString('base64');
 }
 
-// export async function createSessionWithCookie() {
-//   const session = await createSessionWithFiveMinuteExpiry();
-//   return {
-//     session: session,
-//     sessionCookie: serializeSecureCookieServerSide(
-//       'session',
-//       session.token,
-//       60 * 5,
-//     ),
-//   };
-// }
+export async function createSessionWithCookie(token) {
+  return {
+    session: token,
+    sessionCookie: serializeSecureCookieServerSide(
+      'session',
+      token.token,
+      60 * 5,
+    ),
+  };
+}

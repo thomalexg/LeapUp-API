@@ -35,19 +35,23 @@ function camelcaseRecords(records) {
 // Connect to PostgreSQL
 const sql = connectOneTimeToDatabase();
 
-export async function getLeaps() {
+export async function getLeaps(token) {
+  // console.log(await isSessionTokenNotExpired(token));
+  if (!(await isSessionTokenNotExpired(token))) return [];
+  // console.log('Are you still running?');
   const leaps = await sql`
   SELECT * FROM leaps
   `;
+  // console.log('leaps in database', leaps);
   return camelcaseRecords(leaps);
 }
 
 export async function addLeap(title, description, category_id) {
   const addLeap = await sql`
     INSERT INTO leaps
-      (title, description, user_id, category_id)
+      (title, description, user_id, category_id, username)
     VALUES
-      (${title}, ${description}, 1, ${category_id})
+      (${title}, ${description}, ${user_id}, ${category_id}, ${username})
     RETURNING *
     `;
 
@@ -76,6 +80,36 @@ export async function getUserWithHash(username) {
 }
 
 // sessions
+export async function getSessionByToken(sessionToken) {
+  if (!sessionToken) {
+    return undefined;
+  }
+
+  const sessions = await sql`
+    SELECT
+      *
+    FROM
+      sessions
+    WHERE
+      token = ${sessionToken} AND
+      expiry > NOW()
+  `;
+  return camelcaseRecords(sessions)[0];
+}
+
+export async function isSessionTokenNotExpired(sessionToken) {
+  const sessions = await sql`
+    SELECT
+      *
+    FROM
+      sessions
+    WHERE
+      token = ${sessionToken} AND
+      expiry > NOW()
+  `;
+  return sessions.length > 0;
+}
+
 export async function createSessionWithFiveMinuteExpiry() {
   const token = generateToken();
 
@@ -84,6 +118,20 @@ export async function createSessionWithFiveMinuteExpiry() {
       (token, expiry)
     VALUES
       (${token}, NOW() + INTERVAL '5 minutes')
+    RETURNING *
+  `;
+
+  return camelcaseRecords(sessions)[0];
+}
+
+export async function createTokenWhenRegister(user_id) {
+  const token = generateToken();
+
+  const sessions = await sql`
+    INSERT INTO sessions
+      (token, expiry, user_id)
+    VALUES
+      (${token}, NOW() + INTERVAL '43200 minutes', ${user_id})
     RETURNING *
   `;
 
@@ -121,4 +169,40 @@ export async function deleteSessionByToken(token) {
     RETURNING *
   `;
   return camelcaseRecords(sessions)[0];
+}
+
+// user creation and so on
+export async function createUser(username, email, passwordHash) {
+  const users = await sql`
+    INSERT INTO "user"
+      (username, email, password_hash)
+    VALUES
+      (${username}, ${email}, ${passwordHash})
+    RETURNING id, username, email
+  `;
+  return camelcaseRecords(users)[0];
+}
+
+export async function getUserWithHashedPasswordByUsername(username) {
+  const users = await sql`
+    SELECT
+      *
+    FROM
+      "user"
+    WHERE
+      username = ${username}
+  `;
+  return camelcaseRecords(users)[0];
+}
+
+export async function getUserByUsername(username) {
+  const users = await sql`
+    SELECT
+      username
+    FROM
+      users
+    WHERE
+      username = ${username}
+  `;
+  return camelcaseRecords(users)[0];
 }

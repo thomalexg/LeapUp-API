@@ -9,7 +9,9 @@
     "migrate": "dotenv ley"
   },
   "dependencies": {
+    "argon2": "^0.27.1",
     "camelcase-keys": "^6.2.2",
+    "cookie": "^0.4.1",
     "dotenv-safe": "^8.2.0",
     "next": "10.0.8",
     "pg-connection-string": "^2.4.0",

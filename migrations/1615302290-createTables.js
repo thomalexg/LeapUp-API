@@ -12,7 +12,6 @@ exports.up = async (sql) => {
 			);`;
   await sql`CREATE TABLE IF NOT EXISTS "user" (
 			id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-			name VARCHAR(100) NOT NULL,
 			password_hash VARCHAR(100) NOT NULL,
 			username VARCHAR(20) UNIQUE,
 			email TEXT,

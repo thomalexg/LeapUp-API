@@ -1,47 +1,37 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { doesPasswordMatchPasswordHash } from '../../util/auth';
 import {
-  doesCsrfTokenMatchSessionToken,
-  doesPasswordMatchPasswordHash,
-} from '../../util/auth';
-import { serializeSecureCookieServerSide } from '../../util/cookies';
-import {
-  createSessionByUserId,
+  createTokenWhenRegister,
+  getSessionByToken,
   getUserWithHashedPasswordByUsername,
 } from '../../util/database';
+import { createSessionWithCookie } from '../../util/session';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
   const { username, password } = req.body;
-  const sessionToken = req.cookies.session;
 
-  if (!doesCsrfTokenMatchSessionToken(csrfToken, sessionToken)) {
-    return res.status(401).send({
-      errors: [{ message: 'CSRF Token does not match' }],
-      user: null,
-    });
-  }
+  console.log('username', username);
+  console.log('password', password);
 
-  const userWithPasswordHash = await getUserWithHashedPasswordByUsername(
-    username,
-  );
+  const user = await getUserWithHashedPasswordByUsername(username);
+  console.log('user', user);
 
-  // Error out if the username does not exist
-  if (!userWithPasswordHash) {
+  if (!user) {
     return res.status(401).send({
       errors: [{ message: 'Username or password does not match' }],
       user: null,
     });
   }
-
-  const { passwordHash, ...user } = userWithPasswordHash;
+  // const passwordHash = await hashPassword(password);
 
   const passwordMatches = await doesPasswordMatchPasswordHash(
     password,
-    passwordHash,
+    user.passwordHash,
   );
-
+  console.log('passswordMatches', passwordMatches);
   // Error out if the password does not match the hash
   if (!passwordMatches) {
     return res.status(401).send({
@@ -49,18 +39,18 @@ export default async function handler(
       user: null,
     });
   }
+  // const generatedToken = generateToken();
+  const token = await createTokenWhenRegister(user.id);
+  let session = await getSessionByToken(req.cookies.session);
+  console.log('Session', session);
 
-  // At this point, we are successfully authenticated
-  const session = await createSessionByUserId(user.id);
-
-  const sessionCookie = serializeSecureCookieServerSide(
-    'session',
-    session.token,
-  );
-
-  res.setHeader('Set-Cookie', sessionCookie);
+  if (!session) {
+    const result = await createSessionWithCookie(token);
+    session = result.session;
+    res.setHeader('Set-Cookie', result.sessionCookie);
+  }
 
   res.send({
-    user: user,
+    user: { username: user.username, email: user.email, id: user.id },
   });
 }
