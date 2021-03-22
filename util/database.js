@@ -46,7 +46,35 @@ export async function getLeaps(token) {
   return camelcaseRecords(leaps);
 }
 
-export async function addLeap(title, description, category_id) {
+export async function getLeapsById(token, user_id) {
+  // console.log(await isSessionTokenNotExpired(token));
+  if (!(await isSessionTokenNotExpired(token))) return [];
+  // console.log('Are you still running?');
+  const leaps = await sql`
+  SELECT * FROM leaps WHERE user_id = ${user_id}
+  `;
+  // console.log('leaps in database', leaps);
+  return camelcaseRecords(leaps);
+}
+
+export async function getLeapsByUsername(token, username) {
+  // console.log(await isSessionTokenNotExpired(token));
+  if (!(await isSessionTokenNotExpired(token))) return [];
+  // console.log('Are you still running?');
+  const leaps = await sql`
+  SELECT * FROM leaps WHERE username = ${username}
+  `;
+  // console.log('leaps in database', leaps);
+  return camelcaseRecords(leaps);
+}
+
+export async function addLeap(
+  title,
+  description,
+  category_id,
+  user_id,
+  username,
+) {
   const addLeap = await sql`
     INSERT INTO leaps
       (title, description, user_id, category_id, username)
@@ -58,6 +86,17 @@ export async function addLeap(title, description, category_id) {
   return camelcaseRecords(addLeap);
 }
 
+export async function deleteLeap(leap_id, token) {
+  // console.log(await isSessionTokenNotExpired(token));
+  if (!(await isSessionTokenNotExpired(token))) return [];
+  // console.log('Are you still running?');
+  const leaps = await sql`
+  DELETE FROM leaps WHERE id = ${leap_id}
+  `;
+  // console.log('leaps in database', leaps);
+  return camelcaseRecords(leaps);
+}
+
 export async function getCategories() {
   const categories = await sql`
   SELECT * FROM categories
@@ -65,11 +104,19 @@ export async function getCategories() {
   return camelcaseRecords(categories);
 }
 
-export async function getSafedLeaps(user_id) {
-  const categories = await sql`
-  SELECT * FROM categories
+export async function safeLeap(user_id, leap_id) {
+  const safeLeap = await sql`
+  INSERT INTO safed_leaps (leap_id, user_id)
+  VALUES (${leap_id}, ${user_id}) RETURNING *
   `;
-  return camelcaseRecords(categories);
+  return camelcaseRecords(safeLeap);
+}
+
+export async function getFavoriteLeaps(user_id) {
+  const favoriteLeaps = await sql`
+   SELECT l.id, l.title, l.description, l.category_id,l.username  FROM leaps as l, safed_leaps as sf WHERE sf.user_id = ${user_id} AND sf.leap_id = l.id
+  `;
+  return camelcaseRecords(favoriteLeaps);
 }
 
 export async function getUserWithHash(username) {
@@ -108,20 +155,6 @@ export async function isSessionTokenNotExpired(sessionToken) {
       expiry > NOW()
   `;
   return sessions.length > 0;
-}
-
-export async function createSessionWithFiveMinuteExpiry() {
-  const token = generateToken();
-
-  const sessions = await sql`
-    INSERT INTO sessions
-      (token, expiry)
-    VALUES
-      (${token}, NOW() + INTERVAL '5 minutes')
-    RETURNING *
-  `;
-
-  return camelcaseRecords(sessions)[0];
 }
 
 export async function createTokenWhenRegister(user_id) {
@@ -205,4 +238,13 @@ export async function getUserByUsername(username) {
       username = ${username}
   `;
   return camelcaseRecords(users)[0];
+}
+
+// Location
+export async function getLocations() {
+  const location = await sql`
+  SELECT * FROM "location"
+  `;
+
+  return camelcaseRecords(location);
 }

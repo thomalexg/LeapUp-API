@@ -9,9 +9,9 @@ export default async function handler(
   const token = req.cookies.session;
 
   await deleteSessionByToken(token);
-  // await deleteAllExpiredSessions();
+
   const emptyCookie = serializeEmptyCookieServerSide('session');
   res.setHeader('Set-Cookie', emptyCookie);
-  // console.log('empty cookie', req.cookies.session);
+
   return { props: {} };
 }

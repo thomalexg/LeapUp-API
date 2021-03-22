@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import {
-  addLeap,
-  getLeaps,
+  getLeapsByUsername,
   isSessionTokenNotExpired,
 } from '../../util/database';
 
@@ -22,25 +21,14 @@ export default async function handler(
     });
   }
 
-  if (req.method === 'GET') {
-    // console.log('still running get method');
-    const rawLeaps = await getLeaps(session);
+  if (req.method === 'POST') {
+    // console.log('still running get method of myleaps');
+    // console.log('body', req.body);
+    console.log('username', req.body.username);
+    const rawLeaps = await getLeapsByUsername(session, req.body.username);
     // console.log('rawLeaps', rawLeaps);
     const leaps = JSON.stringify(rawLeaps);
-    console.log('leaps', leaps);
+    console.log('leaps by username:', leaps);
     res.json(leaps);
-  }
-
-  if (req.method === 'POST') {
-    // console.log('request:', req);
-    const addedLeap = await addLeap(
-      req.body.title,
-      req.body.description,
-      req.body.category_id,
-      req.body.user_id,
-      req.body.username,
-      // req.body.location,
-    );
-    res.json(addedLeap);
   }
 }

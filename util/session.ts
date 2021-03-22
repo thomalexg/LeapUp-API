@@ -11,7 +11,7 @@ export async function createSessionWithCookie(token) {
     sessionCookie: serializeSecureCookieServerSide(
       'session',
       token.token,
-      60 * 5,
+      60 * 60 * 24 * 30,
     ),
   };
 }

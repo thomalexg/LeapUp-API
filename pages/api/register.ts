@@ -4,7 +4,7 @@ import {
   createTokenWhenRegister,
   createUser,
   deleteAllExpiredSessions,
-  getSessionByToken,
+  getSessionByToken
 } from '../../util/database';
 import { createSessionWithCookie } from '../../util/session';
 // import { doesCsrfTokenMatchSessionToken, hashPassword } from '../../util/auth';
@@ -38,7 +38,7 @@ export default async function handler(
   // const generatedToken = generateToken();
   const token = await createTokenWhenRegister(user.id);
   let session = await getSessionByToken(req.cookies.session);
-  console.log('Session', session);
+  // console.log('Session', session);
   // const passwordHash = await hashPassword(password);
 
   if (!session) {
@@ -47,6 +47,6 @@ export default async function handler(
     res.setHeader('Set-Cookie', result.sessionCookie);
   }
   // const user = await createUser(username, passwordHash);
-  console.log(user);
+  // console.log(user);
   res.send({ user: user });
 }
