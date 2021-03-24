@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import {
-  addLeap,
-  getLeaps,
+  deleteFavoriteLeap,
   isSessionTokenNotExpired,
 } from '../../util/database';
 
@@ -22,26 +21,14 @@ export default async function handler(
     });
   }
 
-  if (req.method === 'GET') {
-    // console.log('still running get method');
-    const rawLeaps = await getLeaps(session);
-    // console.log('rawLeaps', rawLeaps);
-    const leaps = JSON.stringify(rawLeaps);
-    // console.log('leaps', leaps);
-    res.json(leaps);
-  }
-
   if (req.method === 'POST') {
-    console.log('request:', req);
-    const addedLeap = await addLeap(
-      req.body.title,
-      req.body.location,
-      req.body.description,
-      req.body.category_id,
+    console.log('request to delete leap:', req.body.leap_id);
+    const deletedLeap = await deleteFavoriteLeap(
+      req.body.leap_id,
       req.body.user_id,
-      req.body.username,
+      session,
       // req.body.location,
     );
-    res.json(addedLeap);
+    res.json(deletedLeap);
   }
 }

@@ -57,6 +57,35 @@ export async function getLeapsById(token, user_id) {
   return camelcaseRecords(leaps);
 }
 
+export async function getFilteredLeaps(token, category_id, location_id) {
+  // console.log(await isSessionTokenNotExpired(token));
+  if (!(await isSessionTokenNotExpired(token))) return [];
+  // console.log('Are you still running?');
+  if (!category_id && !location_id) {
+    const leaps = await sql`
+  SELECT * FROM leaps
+  `;
+    // console.log('leaps in database', leaps);
+    return camelcaseRecords(leaps);
+  }
+  if (!category_id) {
+    const leaps = await sql`
+  SELECT * FROM leaps WHERE location_id = ${location_id}
+  `;
+    return camelcaseRecords(leaps);
+  }
+  if (!location_id) {
+    const leaps = await sql`
+  SELECT * FROM leaps WHERE category_id = ${category_id}
+  `;
+    return camelcaseRecords(leaps);
+  }
+  const leaps = await sql`
+  SELECT * FROM leaps WHERE category_id = ${category_id} AND location_id = ${location_id}
+  `;
+  return camelcaseRecords(leaps);
+}
+
 export async function getLeapsByUsername(token, username) {
   // console.log(await isSessionTokenNotExpired(token));
   if (!(await isSessionTokenNotExpired(token))) return [];
@@ -70,6 +99,7 @@ export async function getLeapsByUsername(token, username) {
 
 export async function addLeap(
   title,
+  location,
   description,
   category_id,
   user_id,
@@ -77,9 +107,9 @@ export async function addLeap(
 ) {
   const addLeap = await sql`
     INSERT INTO leaps
-      (title, description, user_id, category_id, username)
+      (title, description, user_id, category_id, location_id, username)
     VALUES
-      (${title}, ${description}, ${user_id}, ${category_id}, ${username})
+      (${title}, ${description}, ${user_id}, ${category_id}, ${location}, ${username})
     RETURNING *
     `;
 
@@ -92,6 +122,17 @@ export async function deleteLeap(leap_id, token) {
   // console.log('Are you still running?');
   const leaps = await sql`
   DELETE FROM leaps WHERE id = ${leap_id}
+  `;
+  // console.log('leaps in database', leaps);
+  return camelcaseRecords(leaps);
+}
+
+export async function deleteFavoriteLeap(leap_id, user_id, token) {
+  // console.log(await isSessionTokenNotExpired(token));
+  if (!(await isSessionTokenNotExpired(token))) return [];
+  // console.log('Are you still running?');
+  const leaps = await sql`
+  DELETE FROM safed_leaps WHERE leap_id = ${leap_id} AND user_id = ${user_id}
   `;
   // console.log('leaps in database', leaps);
   return camelcaseRecords(leaps);

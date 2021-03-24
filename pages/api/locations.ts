@@ -10,7 +10,7 @@ export default async function handler(
     const rawLocations = await getLocations();
     // console.log('rawLeaps', rawLeaps);
     const locations = JSON.stringify(rawLocations);
-    console.log('locations', locations);
+    // console.log('locations', locations);
     res.json(locations);
   }
 
