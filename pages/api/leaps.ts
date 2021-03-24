@@ -32,7 +32,7 @@ export default async function handler(
   }
 
   if (req.method === 'POST') {
-    console.log('request:', req);
+    console.log('request to add leap:', req);
     const addedLeap = await addLeap(
       req.body.title,
       req.body.location,

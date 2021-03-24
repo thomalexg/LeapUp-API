@@ -1,5 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { deleteLeap, isSessionTokenNotExpired } from '../../util/database';
+import {
+  deleteFavoriteLeapByLeapId,
+  deleteLeap,
+  isSessionTokenNotExpired,
+} from '../../util/database';
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,6 +24,7 @@ export default async function handler(
 
   if (req.method === 'POST') {
     console.log('request to delete leap:', req.body.leap_id);
+    await deleteFavoriteLeapByLeapId(req.body.leap_id, session);
     const deletedLeap = await deleteLeap(
       req.body.leap_id,
       session,

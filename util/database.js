@@ -46,6 +46,17 @@ export async function getLeaps(token) {
   return camelcaseRecords(leaps);
 }
 
+export async function changePasswordByUserId(user_id, passwordHash, token) {
+  // console.log(await isSessionTokenNotExpired(token));
+  if (!(await isSessionTokenNotExpired(token))) return [];
+  // console.log('Are you still running?');
+  const user = await sql`
+  UPDATE "user" SET password_hash = ${passwordHash} WHERE "user".id = ${user_id}
+  `;
+  // console.log('leaps in database', leaps);
+  return camelcaseRecords(user);
+}
+
 export async function getLeapsById(token, user_id) {
   // console.log(await isSessionTokenNotExpired(token));
   if (!(await isSessionTokenNotExpired(token))) return [];
@@ -122,6 +133,17 @@ export async function deleteLeap(leap_id, token) {
   // console.log('Are you still running?');
   const leaps = await sql`
   DELETE FROM leaps WHERE id = ${leap_id}
+  `;
+  // console.log('leaps in database', leaps);
+  return camelcaseRecords(leaps);
+}
+
+export async function deleteFavoriteLeapByLeapId(leap_id, token) {
+  // console.log(await isSessionTokenNotExpired(token));
+  if (!(await isSessionTokenNotExpired(token))) return [];
+  // console.log('Are you still running?');
+  const leaps = await sql`
+  DELETE FROM safed_leaps WHERE leap_id = ${leap_id}
   `;
   // console.log('leaps in database', leaps);
   return camelcaseRecords(leaps);
