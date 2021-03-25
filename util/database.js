@@ -57,6 +57,17 @@ export async function changePasswordByUserId(user_id, passwordHash, token) {
   return camelcaseRecords(user);
 }
 
+export async function changeEmailByUserId(user_id, email, token) {
+  // console.log(await isSessionTokenNotExpired(token));
+  if (!(await isSessionTokenNotExpired(token))) return [];
+  // console.log('Are you still running?');
+  const user = await sql`
+  UPDATE "user" SET email = ${email} WHERE "user".id = ${user_id}
+  `;
+  // console.log('leaps in database', leaps);
+  return camelcaseRecords(user);
+}
+
 export async function getLeapsById(token, user_id) {
   // console.log(await isSessionTokenNotExpired(token));
   if (!(await isSessionTokenNotExpired(token))) return [];
