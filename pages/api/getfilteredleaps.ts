@@ -28,6 +28,7 @@ export default async function handler(
       session,
       req.body.category_id,
       req.body.location_id,
+      req.body.lastLoadedLeapId,
     );
     console.log('request', req.body.location_id);
     const leaps = JSON.stringify(rawLeaps);

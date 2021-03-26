@@ -12,6 +12,5 @@ export default async function handler(
 
   const emptyCookie = serializeEmptyCookieServerSide('session');
   res.setHeader('Set-Cookie', emptyCookie);
-
-  return { props: {} };
+  res.send('Nothing');
 }

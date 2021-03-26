@@ -85,7 +85,7 @@ export async function getFilteredLeaps(token, category_id, location_id) {
   // console.log('Are you still running?');
   if (!category_id && !location_id) {
     const leaps = await sql`
-  SELECT * FROM leaps
+  SELECT * FROM leaps ORDER BY id DESC LIMIT 5;
   `;
     // console.log('leaps in database', leaps);
     return camelcaseRecords(leaps);
