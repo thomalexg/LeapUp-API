@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import {
   getFavoriteLeaps,
-  isSessionTokenNotExpired,
+  isSessionTokenNotExpired
 } from '../../util/database';
 
 export default async function handler(
@@ -24,7 +24,7 @@ export default async function handler(
   if (req.method === 'POST') {
     // console.log('still running get method of myleaps');
     // console.log('body', req.body);
-    const rawLeaps = await getFavoriteLeaps(req.body.user_id);
+    const rawLeaps = await getFavoriteLeaps(req.body.user_id, req.body.lastLoadedLeapId);
     // console.log('rawLeaps', rawLeaps);
     const leaps = JSON.stringify(rawLeaps);
     console.log('favorite leaps:', leaps);

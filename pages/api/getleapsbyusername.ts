@@ -25,7 +25,11 @@ export default async function handler(
     // console.log('still running get method of myleaps');
     // console.log('body', req.body);
     console.log('username', req.body.username);
-    const rawLeaps = await getLeapsByUsername(session, req.body.username);
+    const rawLeaps = await getLeapsByUsername(
+      session,
+      req.body.username,
+      req.body.lastLoadedLeapId,
+    );
     // console.log('rawLeaps', rawLeaps);
     const leaps = JSON.stringify(rawLeaps);
     console.log('leaps by username:', leaps);

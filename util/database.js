@@ -68,52 +68,99 @@ export async function changeEmailByUserId(user_id, email, token) {
   return camelcaseRecords(user);
 }
 
-export async function getLeapsById(token, user_id) {
+export async function getLeapsById(token, user_id, lastLoadedLeapId) {
   // console.log(await isSessionTokenNotExpired(token));
   if (!(await isSessionTokenNotExpired(token))) return [];
-  // console.log('Are you still running?');
+
+  if (lastLoadedLeapId === '' || !lastLoadedLeapId) {
+    // console.log('Are you still running?');
+    const leaps = await sql`
+  SELECT * FROM leaps WHERE user_id = ${user_id} ORDER BY id DESC LIMIT 5;
+  `;
+    // console.log('leaps in database', leaps);
+    return camelcaseRecords(leaps);
+  }
   const leaps = await sql`
-  SELECT * FROM leaps WHERE user_id = ${user_id}
+  SELECT * FROM leaps WHERE user_id = ${user_id} AND id < ${lastLoadedLeapId}  ORDER BY id DESC LIMIT 5;
   `;
   // console.log('leaps in database', leaps);
   return camelcaseRecords(leaps);
 }
 
-export async function getFilteredLeaps(token, category_id, location_id) {
+export async function getFilteredLeaps(
+  token,
+  category_id,
+  location_id,
+  lastLoadedLeapId,
+) {
   // console.log(await isSessionTokenNotExpired(token));
   if (!(await isSessionTokenNotExpired(token))) return [];
   // console.log('Are you still running?');
+  if (lastLoadedLeapId === '' || !lastLoadedLeapId) {
+    if (!category_id && !location_id) {
+      const leaps = await sql`
+    SELECT * FROM leaps ORDER BY id DESC LIMIT 5;
+    `;
+      // console.log('leaps in database', leaps);
+      return camelcaseRecords(leaps);
+    }
+
+    if (!category_id) {
+      const leaps = await sql`
+  SELECT * FROM leaps  WHERE location_id = ${location_id} ORDER BY id DESC LIMIT 5
+  `;
+      return camelcaseRecords(leaps);
+    }
+    if (!location_id) {
+      const leaps = await sql`
+  SELECT * FROM leaps WHERE category_id = ${category_id} ORDER BY id DESC LIMIT 5
+  `;
+      return camelcaseRecords(leaps);
+    }
+    const leaps = await sql`
+  SELECT * FROM leaps WHERE category_id = ${category_id} AND location_id = ${location_id} ORDER BY id DESC LIMIT 5
+  `;
+    return camelcaseRecords(leaps);
+  }
   if (!category_id && !location_id) {
     const leaps = await sql`
-  SELECT * FROM leaps ORDER BY id DESC LIMIT 5;
+  SELECT * FROM leaps WHERE id < ${lastLoadedLeapId} ORDER BY id DESC LIMIT 5;
   `;
     // console.log('leaps in database', leaps);
     return camelcaseRecords(leaps);
   }
   if (!category_id) {
     const leaps = await sql`
-  SELECT * FROM leaps WHERE location_id = ${location_id}
+  SELECT * FROM leaps WHERE location_id = ${location_id} AND id < ${lastLoadedLeapId}  ORDER BY id DESC LIMIT 5;
   `;
     return camelcaseRecords(leaps);
   }
   if (!location_id) {
     const leaps = await sql`
-  SELECT * FROM leaps WHERE category_id = ${category_id}
+  SELECT * FROM leaps WHERE category_id = ${category_id} AND id < ${lastLoadedLeapId}  ORDER BY id DESC LIMIT 5;
   `;
     return camelcaseRecords(leaps);
   }
   const leaps = await sql`
-  SELECT * FROM leaps WHERE category_id = ${category_id} AND location_id = ${location_id}
+  SELECT * FROM leaps WHERE category_id = ${category_id} AND location_id = ${location_id} AND id < ${lastLoadedLeapId}  ORDER BY id DESC LIMIT 5;
   `;
   return camelcaseRecords(leaps);
 }
 
-export async function getLeapsByUsername(token, username) {
+export async function getLeapsByUsername(token, username, lastLoadedLeapId) {
   // console.log(await isSessionTokenNotExpired(token));
   if (!(await isSessionTokenNotExpired(token))) return [];
   // console.log('Are you still running?');
+  if (lastLoadedLeapId === '' || !lastLoadedLeapId) {
+    const leaps = await sql`
+  SELECT * FROM leaps WHERE username = ${username} ORDER BY id DESC LIMIT 5;
+  `;
+    // console.log('leaps in database', leaps);
+    return camelcaseRecords(leaps);
+  }
+  console.log('running till this point by username');
   const leaps = await sql`
-  SELECT * FROM leaps WHERE username = ${username}
+  SELECT * FROM leaps WHERE username = ${username}  AND id < ${lastLoadedLeapId}ORDER BY id DESC LIMIT 5;
   `;
   // console.log('leaps in database', leaps);
   return camelcaseRecords(leaps);
@@ -186,9 +233,15 @@ export async function safeLeap(user_id, leap_id) {
   return camelcaseRecords(safeLeap);
 }
 
-export async function getFavoriteLeaps(user_id) {
+export async function getFavoriteLeaps(user_id, lastLoadedLeapId) {
+  if (lastLoadedLeapId === '' || !lastLoadedLeapId) {
+    const favoriteLeaps = await sql`
+   SELECT l.id, l.title, l.description, l.category_id,l.username  FROM leaps as l, safed_leaps as sf WHERE sf.user_id = ${user_id} AND sf.leap_id = l.id ORDER BY id DESC LIMIT 5;
+  `;
+    return camelcaseRecords(favoriteLeaps);
+  }
   const favoriteLeaps = await sql`
-   SELECT l.id, l.title, l.description, l.category_id,l.username  FROM leaps as l, safed_leaps as sf WHERE sf.user_id = ${user_id} AND sf.leap_id = l.id
+   SELECT l.id, l.title, l.description, l.category_id,l.username  FROM leaps as l, safed_leaps as sf WHERE sf.user_id = ${user_id} AND sf.leap_id = l.id AND l.id < ${lastLoadedLeapId}  ORDER BY id DESC LIMIT 5;
   `;
   return camelcaseRecords(favoriteLeaps);
 }

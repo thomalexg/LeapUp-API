@@ -23,16 +23,16 @@ export default async function handler(
 
   if (req.method === 'POST') {
     // console.log('still running get method of myleaps');
-    // console.log('body', req.body);
+    console.log('body', req.body);
     const rawLeaps = await getFilteredLeaps(
       session,
       req.body.category_id,
       req.body.location_id,
       req.body.lastLoadedLeapId,
     );
-    console.log('request', req.body.location_id);
+    console.log('request', req.body.lastLoadedLeapId);
     const leaps = JSON.stringify(rawLeaps);
-    // console.log('favorite leaps:', leaps);
+    console.log('favorite leaps:', leaps);
     res.json(leaps);
   }
 }

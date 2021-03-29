@@ -21,7 +21,11 @@ export default async function handler(
   if (req.method === 'POST') {
     // console.log('still running get method of myleaps');
     // console.log('body', req.body);
-    const rawLeaps = await getLeapsById(session, req.body.user_id);
+    const rawLeaps = await getLeapsById(
+      session,
+      req.body.user_id,
+      req.body.lastLoadedLeapId,
+    );
     // console.log('rawLeaps', rawLeaps);
     const leaps = JSON.stringify(rawLeaps);
     // console.log('leaps', leaps);
