@@ -35,16 +35,16 @@ function camelcaseRecords(records) {
 // Connect to PostgreSQL
 const sql = connectOneTimeToDatabase();
 
-export async function getLeaps(token) {
-  // console.log(await isSessionTokenNotExpired(token));
-  if (!(await isSessionTokenNotExpired(token))) return [];
-  // console.log('Are you still running?');
-  const leaps = await sql`
-  SELECT * FROM leaps
-  `;
-  // console.log('leaps in database', leaps);
-  return camelcaseRecords(leaps);
-}
+// export async function getLeaps(token) {
+//   // console.log(await isSessionTokenNotExpired(token));
+//   if (!(await isSessionTokenNotExpired(token))) return [];
+//   // console.log('Are you still running?');
+//   const leaps = await sql`
+//   SELECT * FROM leaps
+//   `;
+//   // console.log('leaps in database', leaps);
+//   return camelcaseRecords(leaps);
+// }
 
 export async function changePasswordByUserId(user_id, passwordHash, token) {
   // console.log(await isSessionTokenNotExpired(token));
@@ -320,6 +320,17 @@ export async function deleteSessionById(id) {
   return camelcaseRecords(sessions)[0];
 }
 
+export async function deleteSessionByUserId(id) {
+  const sessions = await sql`
+    DELETE FROM
+      sessions
+    WHERE
+      user_id = ${id}
+    RETURNING *
+  `;
+  return camelcaseRecords(sessions)[0];
+}
+
 export async function deleteSessionByToken(token) {
   const sessions = await sql`
     DELETE FROM
@@ -365,6 +376,25 @@ export async function getUserByUsername(username) {
       username = ${username}
   `;
   return camelcaseRecords(users)[0];
+}
+
+// delete Account
+
+export async function deleteAccount(user_id, token) {
+  // console.log(await isSessionTokenNotExpired(token));
+  if (!(await isSessionTokenNotExpired(token))) return [];
+  // console.log('Are you still running?');
+  // const safed = await sql`
+  // DELETE FROM "user" WHERE id = ${user_id}
+  // `;
+  // const user = await sql`
+  // DELETE FROM safed_leaps WHERE id = ${user_id}
+  // `;
+  const user = await sql`
+  DELETE FROM "user" WHERE id = ${user_id}
+  `;
+  // console.log('leaps in database', leaps);
+  return camelcaseRecords(user);
 }
 
 // Location

@@ -4,7 +4,7 @@ exports.up = async (sql) => {
       id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
       token VARCHAR(40) UNIQUE,
       expiry TIMESTAMP NOT NULL DEFAULT NOW() + INTERVAL '24 hours',
-      user_id integer references "user"(id)
+      user_id integer references "user"(id) ON DELETE CASCADE
     )
   `;
 };

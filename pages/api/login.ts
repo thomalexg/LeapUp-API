@@ -2,6 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { doesPasswordMatchPasswordHash } from '../../util/auth';
 import {
   createTokenWhenRegister,
+  deleteAllExpiredSessions,
+  deleteSessionByUserId,
   getSessionByToken,
   getUserWithHashedPasswordByUsername,
 } from '../../util/database';
@@ -27,6 +29,8 @@ export default async function handler(
   }
   // const passwordHash = await hashPassword(password);
 
+  await deleteSessionByUserId(user.id);
+  await deleteAllExpiredSessions();
   const passwordMatches = await doesPasswordMatchPasswordHash(
     password,
     user.passwordHash,
@@ -48,8 +52,8 @@ export default async function handler(
     const result = await createSessionWithCookie(token);
     session = result.session;
     res.setHeader('Set-Cookie', result.sessionCookie);
+    console.log('should be an not empty cookie', result.sessionCookie);
   }
-
   res.send({
     user: { username: user.username, email: user.email, id: user.id },
   });
