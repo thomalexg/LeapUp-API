@@ -1,9 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import {
-  addLeap,
-  getLeaps,
-  isSessionTokenNotExpired,
-} from '../../util/database';
+import { addLeap, isSessionTokenNotExpired } from '../../util/database';
 
 export default async function handler(
   req: NextApiRequest,
@@ -22,14 +18,14 @@ export default async function handler(
     });
   }
 
-  if (req.method === 'GET') {
-    // console.log('still running get method');
-    const rawLeaps = await getLeaps(session);
-    // console.log('rawLeaps', rawLeaps);
-    const leaps = JSON.stringify(rawLeaps);
-    // console.log('leaps', leaps);
-    res.json(leaps);
-  }
+  // if (req.method === 'GET') {
+  //   // console.log('still running get method');
+  //   const rawLeaps = await getLeaps(session);
+  //   // console.log('rawLeaps', rawLeaps);
+  //   const leaps = JSON.stringify(rawLeaps);
+  //   // console.log('leaps', leaps);
+  //   res.json(leaps);
+  // }
 
   if (req.method === 'POST') {
     console.log('request to add leap:', req);
