@@ -173,12 +173,14 @@ export async function addLeap(
   category_id,
   user_id,
   username,
+  email,
 ) {
+  console.log('email in addleap', email);
   const addLeap = await sql`
     INSERT INTO leaps
-      (title, description, user_id, category_id, location_id, username)
+      (title, description, user_id, category_id, location_id, username, email)
     VALUES
-      (${title}, ${description}, ${user_id}, ${category_id}, ${location}, ${username})
+      (${title}, ${description}, ${user_id}, ${category_id}, ${location}, ${username}, ${email})
     RETURNING *
     `;
 

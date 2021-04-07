@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import {
   deleteFavoriteLeapByLeapId,
   deleteLeap,
-  isSessionTokenNotExpired,
+  isSessionTokenNotExpired
 } from '../../util/database';
 
 export default async function handler(
@@ -10,10 +10,9 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const session = req.cookies.session;
-  // console.log(req.cookies);
-  // console.log('token in leaps', session);
+
   const isValid = await isSessionTokenNotExpired(session);
-  // console.log('isValid in leaps', isValid);
+
 
   if (!isValid) {
     return res.status(401).send({
@@ -28,7 +27,6 @@ export default async function handler(
     const deletedLeap = await deleteLeap(
       req.body.leap_id,
       session,
-      // req.body.location,
     );
     res.json(deletedLeap);
   }

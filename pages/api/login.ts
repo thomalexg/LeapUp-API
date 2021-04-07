@@ -5,7 +5,7 @@ import {
   deleteAllExpiredSessions,
   deleteSessionByUserId,
   getSessionByToken,
-  getUserWithHashedPasswordByUsername,
+  getUserWithHashedPasswordByUsername
 } from '../../util/database';
 import { createSessionWithCookie } from '../../util/session';
 
@@ -15,11 +15,10 @@ export default async function handler(
 ) {
   const { username, password } = req.body;
 
-  console.log('username', username);
-  console.log('password', password);
+
 
   const user = await getUserWithHashedPasswordByUsername(username);
-  console.log('user', user);
+
 
   if (!user) {
     return res.status(401).send({
@@ -27,7 +26,7 @@ export default async function handler(
       user: null,
     });
   }
-  // const passwordHash = await hashPassword(password);
+
 
   await deleteSessionByUserId(user.id);
   await deleteAllExpiredSessions();
@@ -35,7 +34,7 @@ export default async function handler(
     password,
     user.passwordHash,
   );
-  console.log('passswordMatches', passwordMatches);
+
   // Error out if the password does not match the hash
   if (!passwordMatches) {
     return res.status(401).send({
@@ -46,13 +45,13 @@ export default async function handler(
   // const generatedToken = generateToken();
   const token = await createTokenWhenRegister(user.id);
   let session = await getSessionByToken(req.cookies.session);
-  console.log('Session', session);
+
 
   if (!session) {
     const result = await createSessionWithCookie(token);
     session = result.session;
     res.setHeader('Set-Cookie', result.sessionCookie);
-    console.log('should be an not empty cookie', result.sessionCookie);
+
   }
   res.send({
     user: { username: user.username, email: user.email, id: user.id },

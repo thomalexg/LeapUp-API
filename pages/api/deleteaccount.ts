@@ -6,7 +6,7 @@ import {
   deleteAllExpiredSessions,
   deleteSessionByToken,
   getUserWithHashedPasswordByUsername,
-  isSessionTokenNotExpired,
+  isSessionTokenNotExpired
 } from '../../util/database';
 
 export default async function handler(
@@ -16,10 +16,9 @@ export default async function handler(
   const { password, user_id, username } = req.body;
   const session = req.cookies.session;
   await deleteAllExpiredSessions();
-  console.log('userid', user_id);
-  console.log('password', password);
+
   const isValid = await isSessionTokenNotExpired(session);
-  // console.log('isValid in leaps', isValid);
+
 
   if (!isValid) {
     return res.status(401).send({
@@ -28,7 +27,7 @@ export default async function handler(
     });
   }
   const user = await getUserWithHashedPasswordByUsername(username);
-  console.log('user', user);
+
 
   if (!user) {
     return res.status(401).send({
@@ -46,7 +45,7 @@ export default async function handler(
       user: null,
     });
   }
-  // await deleteSessionById(user_id);
+
   const result = await deleteAccount(user_id, session);
 
   await deleteSessionByToken(session);

@@ -6,7 +6,7 @@ import {
   deleteAllExpiredSessions,
   deleteLeap,
   deleteSessionByToken,
-  isSessionTokenNotExpired,
+  isSessionTokenNotExpired
 } from '../../util/database';
 
 export default async function handler(
@@ -16,10 +16,9 @@ export default async function handler(
   const { password, user_id } = req.body;
   const session = req.cookies.session;
   await deleteAllExpiredSessions();
-  console.log('userid', user_id);
-  console.log('password', password);
+
   const isValid = await isSessionTokenNotExpired(session);
-  // console.log('isValid in leaps', isValid);
+
 
   if (!isValid) {
     return res.status(401).send({
@@ -27,9 +26,9 @@ export default async function handler(
       user: null,
     });
   }
-  console.log('running');
+
   const passwordHash = await hashPassword(password);
-  console.log('passwordHash', passwordHash);
+
 
   await changePasswordByUserId(user_id, passwordHash, session);
   const changedPassword = await deleteLeap(
@@ -37,7 +36,7 @@ export default async function handler(
     session,
     // req.body.location,
   );
-  console.log('User with changed password', changedPassword);
+
   await deleteSessionByToken(session);
   const emptyCookie = serializeEmptyCookieServerSide('session');
   res.setHeader('Set-Cookie', emptyCookie);
