@@ -29,6 +29,5 @@
   },
   "cacheDirectories": [
     ".next/cache"
-  ],
-  "heroku-postbuild": "yarn migrate up && yarn build"
+  ]
 }
