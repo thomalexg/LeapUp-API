@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p ${PORT:-\"3000\"}",
+    "heroku-postbuild": "yarn migrate up && yarn build",
     "migrate": "dotenv ley"
   },
   "dependencies": {
@@ -25,5 +26,9 @@
     "dotenv-cli": "^4.0.0",
     "ley": "0.6.0",
     "typescript": "^4.2.3"
-  }
+  },
+  "cacheDirectories": [
+    ".next/cache"
+  ],
+  "heroku-postbuild": "yarn migrate up && yarn build"
 }
