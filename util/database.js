@@ -4,20 +4,13 @@ import { generateToken } from './session';
 import setPostgresDefaultsOnHeroku from './setPostgresDefaultsOnHeroku';
 
 setPostgresDefaultsOnHeroku();
-// Read in the values from the .env file
-// (which should be ignored in Git!)
-require('dotenv-safe').config();
 
-// Connect only once to the database
-// https://github.com/vercel/next.js/issues/7811#issuecomment-715259370
+require('dotenv-safe').config();
 
 function connectOneTimeToDatabase() {
   let sql;
 
   if (process.env.NODE_ENV === 'production') {
-    // Heroku needs SSL connections but
-    // has an "unauthorized" certificate
-    // https://devcenter.heroku.com/changelog-items/852
     sql = postgres({ ssl: { rejectUnauthorized: false } });
   } else {
     if (!globalThis.__postgresSqlClient) {
@@ -31,60 +24,58 @@ function connectOneTimeToDatabase() {
 function camelcaseRecords(records) {
   return records.map((record) => camelcaseKeys(record));
 }
+function camelcaseRecordsObject(records) {
+  const leaps = records.leaps.map((record) => camelcaseKeys(record));
+  const count = records.count;
+
+  return { leaps, count };
+}
 
 // Connect to PostgreSQL
 const sql = connectOneTimeToDatabase();
 
-// export async function getLeaps(token) {
-//   // console.log(await isSessionTokenNotExpired(token));
-//   if (!(await isSessionTokenNotExpired(token))) return [];
-//   // console.log('Are you still running?');
-//   const leaps = await sql`
-//   SELECT * FROM leaps
-//   `;
-//   // console.log('leaps in database', leaps);
-//   return camelcaseRecords(leaps);
-// }
-
 export async function changePasswordByUserId(user_id, passwordHash, token) {
-  // console.log(await isSessionTokenNotExpired(token));
   if (!(await isSessionTokenNotExpired(token))) return [];
-  // console.log('Are you still running?');
+
   const user = await sql`
   UPDATE "user" SET password_hash = ${passwordHash} WHERE "user".id = ${user_id}
   `;
-  // console.log('leaps in database', leaps);
+
   return camelcaseRecords(user);
 }
 
 export async function changeEmailByUserId(user_id, email, token) {
-  // console.log(await isSessionTokenNotExpired(token));
   if (!(await isSessionTokenNotExpired(token))) return [];
-  // console.log('Are you still running?');
+
   const user = await sql`
   UPDATE "user" SET email = ${email} WHERE "user".id = ${user_id}
   `;
-  // console.log('leaps in database', leaps);
+
   return camelcaseRecords(user);
 }
 
 export async function getLeapsById(token, user_id, lastLoadedLeapId) {
-  // console.log(await isSessionTokenNotExpired(token));
   if (!(await isSessionTokenNotExpired(token))) return [];
 
   if (lastLoadedLeapId === '' || !lastLoadedLeapId) {
-    // console.log('Are you still running?');
     const leaps = await sql`
   SELECT * FROM leaps WHERE user_id = ${user_id} ORDER BY id DESC LIMIT 5;
   `;
-    // console.log('leaps in database', leaps);
-    return camelcaseRecords(leaps);
+    const getCount = await sql`
+  SELECT COUNT(*) FROM leaps WHERE user_id = ${user_id};
+  `;
+    const count = getCount[0].count;
+
+    return camelcaseRecordsObject({ leaps, count });
   }
   const leaps = await sql`
   SELECT * FROM leaps WHERE user_id = ${user_id} AND id < ${lastLoadedLeapId}  ORDER BY id DESC LIMIT 5;
   `;
-  // console.log('leaps in database', leaps);
-  return camelcaseRecords(leaps);
+  const getCount = await sql`
+  SELECT COUNT(*) FROM leaps WHERE user_id = ${user_id};
+  `;
+  const count = getCount[0].count;
+  return camelcaseRecordsObject({ leaps, count });
 }
 
 export async function getFilteredLeaps(
@@ -101,50 +92,80 @@ export async function getFilteredLeaps(
       const leaps = await sql`
     SELECT * FROM leaps ORDER BY id DESC LIMIT 5;
     `;
-      // console.log('leaps in database', leaps);
-      return camelcaseRecords(leaps);
+      const getCount = await sql`
+     SELECT COUNT(*) FROM leaps;
+     `;
+      const count = getCount[0].count;
+      return camelcaseRecordsObject({ leaps, count });
     }
 
     if (!category_id) {
       const leaps = await sql`
   SELECT * FROM leaps  WHERE location_id = ${location_id} ORDER BY id DESC LIMIT 5
   `;
-      return camelcaseRecords(leaps);
+      const getCount = await sql`
+       SELECT COUNT(*) FROM leaps WHERE location_id = ${location_id};
+       `;
+      const count = getCount[0].count;
+      return camelcaseRecordsObject({ leaps, count });
     }
     if (!location_id) {
       const leaps = await sql`
   SELECT * FROM leaps WHERE category_id = ${category_id} ORDER BY id DESC LIMIT 5
   `;
-      return camelcaseRecords(leaps);
+      const getCount = await sql`
+       SELECT COUNT(*) FROM leaps WHERE category_id = ${category_id};
+       `;
+      const count = getCount[0].count;
+      return camelcaseRecordsObject({ leaps, count });
     }
     const leaps = await sql`
   SELECT * FROM leaps WHERE category_id = ${category_id} AND location_id = ${location_id} ORDER BY id DESC LIMIT 5
   `;
-    return camelcaseRecords(leaps);
+    const getCount = await sql`
+     SELECT COUNT(*) FROM leaps WHERE category_id = ${category_id} AND location_id = ${location_id};
+     `;
+    const count = getCount[0].count;
+    return camelcaseRecordsObject({ leaps, count });
   }
   if (!category_id && !location_id) {
     const leaps = await sql`
   SELECT * FROM leaps WHERE id < ${lastLoadedLeapId} ORDER BY id DESC LIMIT 5;
   `;
-    // console.log('leaps in database', leaps);
-    return camelcaseRecords(leaps);
+    const getCount = await sql`
+    SELECT COUNT(*) FROM leaps;
+    `;
+    const count = getCount[0].count;
+    return camelcaseRecordsObject({ leaps, count });
   }
   if (!category_id) {
     const leaps = await sql`
   SELECT * FROM leaps WHERE location_id = ${location_id} AND id < ${lastLoadedLeapId}  ORDER BY id DESC LIMIT 5;
   `;
-    return camelcaseRecords(leaps);
+    const getCount = await sql`
+    SELECT COUNT(*) FROM leaps WHERE location_id = ${location_id};
+    `;
+    const count = getCount[0].count;
+    return camelcaseRecordsObject({ leaps, count });
   }
   if (!location_id) {
     const leaps = await sql`
   SELECT * FROM leaps WHERE category_id = ${category_id} AND id < ${lastLoadedLeapId}  ORDER BY id DESC LIMIT 5;
   `;
-    return camelcaseRecords(leaps);
+    const getCount = await sql`
+    SELECT COUNT(*) FROM leaps WHERE category_id = ${category_id};
+    `;
+    const count = getCount[0].count;
+    return camelcaseRecordsObject({ leaps, count });
   }
   const leaps = await sql`
   SELECT * FROM leaps WHERE category_id = ${category_id} AND location_id = ${location_id} AND id < ${lastLoadedLeapId}  ORDER BY id DESC LIMIT 5;
   `;
-  return camelcaseRecords(leaps);
+  const getCount = await sql`
+  SELECT COUNT(*) FROM leaps WHERE category_id = ${category_id} AND location_id = ${location_id};
+  `;
+  const count = getCount[0].count;
+  return camelcaseRecordsObject({ leaps, count });
 }
 
 export async function getLeapsByUsername(token, username, lastLoadedLeapId) {
@@ -155,15 +176,21 @@ export async function getLeapsByUsername(token, username, lastLoadedLeapId) {
     const leaps = await sql`
   SELECT * FROM leaps WHERE username = ${username} ORDER BY id DESC LIMIT 5;
   `;
-    // console.log('leaps in database', leaps);
-    return camelcaseRecords(leaps);
+    const getCount = await sql`
+    SELECT COUNT(*) FROM leaps WHERE username = ${username};
+    `;
+    const count = getCount[0].count;
+    return camelcaseRecordsObject({ leaps, count });
   }
-  console.log('running till this point by username');
+
   const leaps = await sql`
   SELECT * FROM leaps WHERE username = ${username}  AND id < ${lastLoadedLeapId}ORDER BY id DESC LIMIT 5;
   `;
-  // console.log('leaps in database', leaps);
-  return camelcaseRecords(leaps);
+  const getCount = await sql`
+  SELECT COUNT(*) FROM leaps WHERE username = ${username};
+  `;
+  const count = getCount[0].count;
+  return camelcaseRecordsObject({ leaps, count });
 }
 
 export async function addLeap(

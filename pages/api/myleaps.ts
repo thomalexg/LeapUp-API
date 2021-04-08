@@ -9,7 +9,6 @@ export default async function handler(
 
   const isValid = await isSessionTokenNotExpired(session);
 
-
   if (!isValid) {
     return res.status(401).send({
       errors: [{ message: 'no valid token' }],
@@ -18,7 +17,6 @@ export default async function handler(
   }
 
   if (req.method === 'POST') {
-
     const rawLeaps = await getLeapsById(
       session,
       req.body.user_id,
@@ -26,7 +24,7 @@ export default async function handler(
     );
 
     const leaps = JSON.stringify(rawLeaps);
-
+    console.log('leaps with count', leaps);
     res.json(leaps);
   }
 }
