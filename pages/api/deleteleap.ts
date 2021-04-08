@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import {
   deleteFavoriteLeapByLeapId,
   deleteLeap,
-  isSessionTokenNotExpired
+  isSessionTokenNotExpired,
 } from '../../util/database';
 
 export default async function handler(
@@ -13,7 +13,6 @@ export default async function handler(
 
   const isValid = await isSessionTokenNotExpired(session);
 
-
   if (!isValid) {
     return res.status(401).send({
       errors: [{ message: 'no valid token' }],
@@ -22,12 +21,8 @@ export default async function handler(
   }
 
   if (req.method === 'POST') {
-    console.log('request to delete leap:', req.body.leap_id);
     await deleteFavoriteLeapByLeapId(req.body.leap_id, session);
-    const deletedLeap = await deleteLeap(
-      req.body.leap_id,
-      session,
-    );
+    const deletedLeap = await deleteLeap(req.body.leap_id, session);
     res.json(deletedLeap);
   }
 }
