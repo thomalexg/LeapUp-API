@@ -84,9 +84,8 @@ export async function getFilteredLeaps(
   location_id,
   lastLoadedLeapId,
 ) {
-  // console.log(await isSessionTokenNotExpired(token));
   if (!(await isSessionTokenNotExpired(token))) return [];
-  // console.log('Are you still running?');
+
   if (lastLoadedLeapId === '' || !lastLoadedLeapId) {
     if (!category_id && !location_id) {
       const leaps = await sql`
@@ -169,9 +168,8 @@ export async function getFilteredLeaps(
 }
 
 export async function getLeapsByUsername(token, username, lastLoadedLeapId) {
-  // console.log(await isSessionTokenNotExpired(token));
   if (!(await isSessionTokenNotExpired(token))) return [];
-  // console.log('Are you still running?');
+
   if (lastLoadedLeapId === '' || !lastLoadedLeapId) {
     const leaps = await sql`
   SELECT * FROM leaps WHERE username = ${username} ORDER BY id DESC LIMIT 5;
@@ -215,35 +213,32 @@ export async function addLeap(
 }
 
 export async function deleteLeap(leap_id, token) {
-  // console.log(await isSessionTokenNotExpired(token));
   if (!(await isSessionTokenNotExpired(token))) return [];
-  // console.log('Are you still running?');
+
   const leaps = await sql`
   DELETE FROM leaps WHERE id = ${leap_id}
   `;
-  // console.log('leaps in database', leaps);
+
   return camelcaseRecords(leaps);
 }
 
 export async function deleteFavoriteLeapByLeapId(leap_id, token) {
-  // console.log(await isSessionTokenNotExpired(token));
   if (!(await isSessionTokenNotExpired(token))) return [];
-  // console.log('Are you still running?');
+
   const leaps = await sql`
   DELETE FROM safed_leaps WHERE leap_id = ${leap_id}
   `;
-  // console.log('leaps in database', leaps);
+
   return camelcaseRecords(leaps);
 }
 
 export async function deleteFavoriteLeap(leap_id, user_id, token) {
-  // console.log(await isSessionTokenNotExpired(token));
   if (!(await isSessionTokenNotExpired(token))) return [];
-  // console.log('Are you still running?');
+
   const leaps = await sql`
   DELETE FROM safed_leaps WHERE leap_id = ${leap_id} AND user_id = ${user_id}
   `;
-  // console.log('leaps in database', leaps);
+
   return camelcaseRecords(leaps);
 }
 
@@ -267,12 +262,20 @@ export async function getFavoriteLeaps(user_id, lastLoadedLeapId) {
     const favoriteLeaps = await sql`
    SELECT l.id, l.title, l.description, l.category_id,l.username  FROM leaps as l, safed_leaps as sf WHERE sf.user_id = ${user_id} AND sf.leap_id = l.id ORDER BY id DESC LIMIT 5;
   `;
-    return camelcaseRecords(favoriteLeaps);
+    const getCount = await sql`
+     SELECT COUNT(*) FROM leaps as l, safed_leaps as sf WHERE sf.user_id = ${user_id} AND sf.leap_id = l.id;
+     `;
+    const count = getCount[0].count;
+    return camelcaseRecordsObject({ favoriteLeaps, count });
   }
   const favoriteLeaps = await sql`
    SELECT l.id, l.title, l.description, l.category_id,l.username  FROM leaps as l, safed_leaps as sf WHERE sf.user_id = ${user_id} AND sf.leap_id = l.id AND l.id < ${lastLoadedLeapId}  ORDER BY id DESC LIMIT 5;
   `;
-  return camelcaseRecords(favoriteLeaps);
+  const getCount = await sql`
+   SELECT COUNT(*) FROM leaps as l, safed_leaps as sf WHERE sf.user_id = ${user_id} AND sf.leap_id = l.id;
+   `;
+  const count = getCount[0].count;
+  return camelcaseRecordsObject({ favoriteLeaps, count });
 }
 
 export async function getUserWithHash(username) {
@@ -410,19 +413,12 @@ export async function getUserByUsername(username) {
 // delete Account
 
 export async function deleteAccount(user_id, token) {
-  // console.log(await isSessionTokenNotExpired(token));
   if (!(await isSessionTokenNotExpired(token))) return [];
-  // console.log('Are you still running?');
-  // const safed = await sql`
-  // DELETE FROM "user" WHERE id = ${user_id}
-  // `;
-  // const user = await sql`
-  // DELETE FROM safed_leaps WHERE id = ${user_id}
-  // `;
+
   const user = await sql`
   DELETE FROM "user" WHERE id = ${user_id}
   `;
-  // console.log('leaps in database', leaps);
+
   return camelcaseRecords(user);
 }
 
