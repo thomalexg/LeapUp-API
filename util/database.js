@@ -257,6 +257,13 @@ export async function safeLeap(user_id, leap_id) {
   return camelcaseRecords(safeLeap);
 }
 
+export async function savedLeapByIds(user_id, leap_id) {
+  const safeLeap = await sql`
+  SELECT * FROM safed_leaps WHERE user_id = ${userid} AND leap_id = ${leap_id}
+  `;
+  return camelcaseRecords(safeLeap);
+}
+
 export async function getFavoriteLeaps(user_id, lastLoadedLeapId) {
   if (lastLoadedLeapId === '' || !lastLoadedLeapId) {
     const leaps = await sql`
