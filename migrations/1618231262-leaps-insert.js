@@ -6,6 +6,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Lorem ipsum',
@@ -14,6 +15,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Lorem ipsum',
@@ -22,6 +24,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Lorem ipsum',
@@ -30,6 +33,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Lorem ipsum',
@@ -38,6 +42,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Lorem ipsum',
@@ -46,6 +51,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Lorem ipsum',
@@ -54,6 +60,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Lorem ipsum',
@@ -62,6 +69,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Lorem ipsum',
@@ -70,6 +78,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Lorem ipsum',
@@ -78,6 +87,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Lorem ipsum',
@@ -86,6 +96,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Lorem ipsum',
@@ -94,6 +105,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Lorem ipsum',
@@ -102,6 +114,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Lorem ipsum',
@@ -110,6 +123,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Lorem ipsum',
@@ -118,6 +132,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Lorem ipsum',
@@ -126,6 +141,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Lorem ipsum',
@@ -134,6 +150,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Lorem ipsum',
@@ -142,6 +159,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Lorem ipsum',
@@ -150,6 +168,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Learn drawing',
@@ -158,6 +177,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Hello to LeapUp!',
@@ -166,6 +186,7 @@ const leaps = [
     user_id: 2,
     category_id: 10,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Hello to LeapUp!',
@@ -174,6 +195,7 @@ const leaps = [
     user_id: 1,
     category_id: 10,
     username: 'thomalex',
+    email: 'thomas.gae@posteo.de',
   },
   {
     title: 'Learn manuals on an mointain bike',
@@ -182,6 +204,7 @@ const leaps = [
     user_id: 2,
     category_id: 6,
     username: 'thomas',
+    email: 'thomas.gae@posteo.de',
   },
 ];
 
