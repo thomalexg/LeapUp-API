@@ -259,7 +259,7 @@ export async function safeLeap(user_id, leap_id) {
 
 export async function savedLeapByIds(user_id, leap_id) {
   const safeLeap = await sql`
-  SELECT * FROM safed_leaps WHERE user_id = ${userid} AND leap_id = ${leap_id}
+  SELECT * FROM safed_leaps WHERE user_id = ${user_id} AND leap_id = ${leap_id}
   `;
   return camelcaseRecords(safeLeap);
 }
