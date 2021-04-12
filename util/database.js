@@ -25,7 +25,7 @@ function camelcaseRecords(records) {
   return records.map((record) => camelcaseKeys(record));
 }
 function camelcaseRecordsObject(records) {
-  const leaps = records.leaps.map((record) => camelcaseKeys(record));
+  const leaps = records.leaps?.map((record) => camelcaseKeys(record));
   const count = records.count;
 
   return { leaps, count };
@@ -259,23 +259,44 @@ export async function safeLeap(user_id, leap_id) {
 
 export async function getFavoriteLeaps(user_id, lastLoadedLeapId) {
   if (lastLoadedLeapId === '' || !lastLoadedLeapId) {
-    const favoriteLeaps = await sql`
+    const leaps = await sql`
    SELECT l.id, l.title, l.description, l.category_id,l.username  FROM leaps as l, safed_leaps as sf WHERE sf.user_id = ${user_id} AND sf.leap_id = l.id ORDER BY id DESC LIMIT 5;
   `;
     const getCount = await sql`
      SELECT COUNT(*) FROM leaps as l, safed_leaps as sf WHERE sf.user_id = ${user_id} AND sf.leap_id = l.id;
      `;
     const count = getCount[0].count;
-    return camelcaseRecordsObject({ favoriteLeaps, count });
+    return camelcaseRecordsObject({ leaps, count });
   }
-  const favoriteLeaps = await sql`
+  const leaps = await sql`
    SELECT l.id, l.title, l.description, l.category_id,l.username  FROM leaps as l, safed_leaps as sf WHERE sf.user_id = ${user_id} AND sf.leap_id = l.id AND l.id < ${lastLoadedLeapId}  ORDER BY id DESC LIMIT 5;
   `;
   const getCount = await sql`
    SELECT COUNT(*) FROM leaps as l, safed_leaps as sf WHERE sf.user_id = ${user_id} AND sf.leap_id = l.id;
    `;
   const count = getCount[0].count;
-  return camelcaseRecordsObject({ favoriteLeaps, count });
+  return camelcaseRecordsObject({ leaps, count });
+}
+
+export async function getAllLeapIdsByUserId(user_id) {
+  const user = await sql`
+  SELECT id FROM leaps WHERE user_id = ${user_id}
+  `;
+  return camelcaseRecords(user);
+}
+
+export async function deleteAllSafedLeapsByUserId(user_id) {
+  const user = await sql`
+  DELETE FROM safed_leaps WHERE user_id = ${user_id}
+  `;
+  return camelcaseRecords(user);
+}
+
+export async function deleteAllLeapsByUserId(user_id) {
+  const user = await sql`
+  DELETE FROM leaps WHERE user_id = ${user_id}
+  `;
+  return camelcaseRecords(user);
 }
 
 export async function getUserWithHash(username) {

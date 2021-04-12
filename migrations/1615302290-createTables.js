@@ -29,15 +29,15 @@ exports.up = async (sql) => {
 		id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 		title VARCHAR(150) NOT NULL,
 		description TEXT,
-		user_id  integer references "user"(id),
+		user_id  integer references "user"(id) ON DELETE CASCADE,
 		category_id integer references categories(id),
 		location_id integer references "location"(id)
 	);`;
 
   await sql`CREATE TABLE IF NOT EXISTS safed_leaps (
 		id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-		leap_id integer references leaps(id),
-		user_id integer references "user"(id)
+		leap_id integer references leaps(id) ON DELETE CASCADE,
+		user_id integer references "user"(id) ON DELETE CASCADE
 	);`;
 };
 

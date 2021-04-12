@@ -79,6 +79,7 @@ const leaps = [
       'LeapUp helps you to find people who want to learn the same things that you want to learn. So just go through the Leaps and see if someone wants to learn the same as you. And if you don´t find any Leap, ust create your own Leap and wait for people reaching out to you.',
     user_id: 1,
     category_id: 10,
+    username: thomalex,
   },
 ];
 
