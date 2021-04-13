@@ -1,5 +1,5 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import Head from 'next/head';
+import styles from '../styles/Home.module.css';
 
 export default function Home() {
   return (
@@ -11,40 +11,35 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          Welcome to <a href="/logo-store.png">LeapUp!</a>
         </h1>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+        <p className={styles.description}>Learn up your life!</p>
 
         <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
+          <a href="https://github.com/thomalexg" className={styles.card}>
+            <h3>Go to my GitHub &rarr;</h3>
+            <p>Find all my projects </p>
           </a>
 
           <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
+            href="https://github.com/thomalexg/LeapUp-API"
             className={styles.card}
           >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
+            <h3>Repository of this project &rarr;</h3>
+            <p>Check out the source code of this project</p>
           </a>
 
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
+          <a href="https://github.com/thomalexg/LeapUp" className={styles.card}>
+            <h3>Repository of the LeapUp React Native App &rarr;</h3>
+            <p>Check out the source code of the LeapUp App</p>
+          </a>
+
+          <a href="https://youtu.be/xufgJSZEykc" className={styles.card}>
+            <h3>Watch a video &rarr;</h3>
             <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
+              Watch a video on YouTube where you can see the functionality of
+              the LeapUp App!
             </p>
           </a>
         </div>
@@ -61,5 +56,5 @@ export default function Home() {
         </a>
       </footer>
     </div>
-  )
+  );
 }
